@@ -1,0 +1,45 @@
+{
+  "name": "@civ-clone/civ1-power",
+  "version": "0.1.0",
+  "description": "Civilization's ranking score and military strength, as core-power rules.",
+  "main": "index.js",
+  "repository": "git@github.com:civ-clone/civ1-power.git",
+  "keywords": [
+    "typescript",
+    "civilization"
+  ],
+  "author": "dom111 <dom111@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "npm run ts:compile && npm run prettier:format",
+    "prettier:check": "prettier --config .prettierrc --check '**/*.ts'",
+    "prettier:format": "prettier --config .prettierrc '**/*.ts' --write",
+    "test": "ts-mocha ./tests/*.test.ts",
+    "ts:compile": "tsc --build tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^16.0.0",
+    "chai": "^4.0.0",
+    "mocha": "^10.0.0",
+    "prettier": "^2.8.8",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.0.0"
+  },
+  "dependencies": {
+    "@civ-clone/base-city-yield-gold": "^0.1.0",
+    "@civ-clone/civ1-unit": "github:civ-clone/civ1-unit",
+    "@civ-clone/core-city": "^0.1.20",
+    "@civ-clone/core-city-build": "^0.1.14",
+    "@civ-clone/core-city-growth": "^0.1.6",
+    "@civ-clone/core-game": "^0.1.9",
+    "@civ-clone/core-player": "^0.1.10",
+    "@civ-clone/core-power": "^0.1.0",
+    "@civ-clone/core-rule": "^0.1.6",
+    "@civ-clone/core-science": "^0.1.6",
+    "@civ-clone/core-treasury": "^0.1.8",
+    "@civ-clone/core-unit": "^0.1.26"
+  }
+}
