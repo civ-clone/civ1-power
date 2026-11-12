@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@civ-clone/base-city-yield-gold": "^0.1.0",
-    "@civ-clone/base-power": "github:civ-clone/base-power#feat/power-terms",
+    "@civ-clone/base-power": "^0.1.0",
     "@civ-clone/civ1-unit": "github:civ-clone/civ1-unit",
     "@civ-clone/core-city": "^0.1.20",
     "@civ-clone/core-city-growth": "^0.1.6",
