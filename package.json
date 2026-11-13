@@ -1,6 +1,6 @@
 {
   "name": "@civ-clone/civ1-power",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Civilization's ranking score and military strength, as core-power rules.",
   "main": "index.js",
   "repository": "git@github.com:civ-clone/civ1-power.git",
