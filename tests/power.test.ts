@@ -1,3 +1,4 @@
+import * as Units from '@civ-clone/civ1-unit/Units';
 import { Nuclear, Settlers, Warrior } from '@civ-clone/civ1-unit/Units';
 import {
   militaryPower,
@@ -12,6 +13,7 @@ import Unit from '@civ-clone/core-unit/Unit';
 import { expect } from 'chai';
 import playerRank from '../Rules/Player/rank';
 import { rank } from '@civ-clone/core-power/lib/rank';
+import traits from '@civ-clone/civ1-unit/Rules/Unit/traits';
 import unitStrength from '../Rules/Unit/strength';
 
 // Stand-ins for the registries: each rule only asks them for one player's entries.
@@ -25,6 +27,8 @@ const setUp = () => {
     ]),
     standInUnit = (UnitType: typeof Unit, attack: number, defence: number) =>
       Object.assign(Object.create(UnitType.prototype), {
+        // The rules' registry, which holds the trait declarations `unit.hasTrait()` reads.
+        _ruleRegistry: ruleRegistry,
         attack: () => ({ value: () => attack }),
         defence: () => ({ value: () => defence }),
       }) as Unit,
@@ -37,6 +41,8 @@ const setUp = () => {
     cities = [{ size: 3 }, { size: 5 }];
 
   ruleRegistry.register(
+    // civ1-unit's trait declarations, which the strength rule asks (`Detonates`), as a game registers them first.
+    ...traits(),
     new BuildCost(
       new Effect((item: BuildItem) => ({
         value: () => costs.get(item.item() as typeof Unit) ?? 0,
@@ -55,7 +61,7 @@ const setUp = () => {
     ...unitStrength()
   );
 
-  return { player, ruleRegistry, units };
+  return { player, ruleRegistry, standInUnit, units };
 };
 
 describe('civ1-power', () => {
@@ -74,5 +80,22 @@ describe('civ1-power', () => {
       defence: 3,
     });
     expect(militaryPower(units, ruleRegistry)).equal(5);
+  });
+
+  // The rule asked `instanceof Nuclear` before it asked `Detonates`: the same units count, for each of the 28 types.
+  it('counts the same unit types as `!(unit instanceof Nuclear)` did', () => {
+    const { ruleRegistry, standInUnit } = setUp(),
+      UnitTypes = Object.values(Units) as unknown as (typeof Unit)[];
+
+    expect(UnitTypes).length(28);
+
+    UnitTypes.forEach((UnitType) => {
+      const unit = standInUnit(UnitType, 1, 0);
+
+      expect(
+        militaryStrength([unit], ruleRegistry).attack,
+        UnitType.name
+      ).equal(unit instanceof Nuclear ? 0 : 1);
+    });
   });
 });
