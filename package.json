@@ -19,6 +19,7 @@
     "ts:compile": "tsc --build tsconfig.json"
   },
   "devDependencies": {
+    "@civ-clone/civ1-unit": "github:civ-clone/civ1-unit",
     "@civ-clone/core-city-build": "^0.1.14",
     "@civ-clone/core-player": "^0.1.10",
     "@types/chai": "^4.0.0",
@@ -33,7 +34,7 @@
   "dependencies": {
     "@civ-clone/base-city-yield-gold": "^0.1.0",
     "@civ-clone/base-power": "^0.1.0",
-    "@civ-clone/civ1-unit": "github:civ-clone/civ1-unit",
+    "@civ-clone/base-unit-trait-detonates": "^0.1.0",
     "@civ-clone/core-city": "^0.1.20",
     "@civ-clone/core-city-growth": "^0.1.6",
     "@civ-clone/core-game": "^0.1.9",
@@ -41,6 +42,6 @@
     "@civ-clone/core-rule": "^0.1.6",
     "@civ-clone/core-science": "^0.1.6",
     "@civ-clone/core-treasury": "^0.1.8",
-    "@civ-clone/core-unit": "^0.1.26"
+    "@civ-clone/core-unit": "^0.1.31"
   }
 }
