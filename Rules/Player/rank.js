@@ -9,20 +9,31 @@ const PlayerTreasuryRegistry_1 = require("@civ-clone/core-treasury/PlayerTreasur
 const RuleRegistry_1 = require("@civ-clone/core-rule/RuleRegistry");
 const UnitRegistry_1 = require("@civ-clone/core-unit/UnitRegistry");
 const Effect_1 = require("@civ-clone/core-rule/Effect");
+const advanceCount_1 = require("@civ-clone/core-science/advanceCount");
 const Gold_1 = require("@civ-clone/base-city-yield-gold/Gold");
 const Rank_1 = require("@civ-clone/core-power/Rules/Rank");
 // v474.05's ranking score, worked out for every civilization each turn (OpenCivOne `Segment_1238.cs`
 //  `F0_1238_0da1`; book p337):
 //
-//    gold / 32 + 8 × citizens + advances known + Σ over units of the unit type's cost in tens of shields
+//    gold / 32 + 8 × citizens + tech_count + Σ over units of the unit type's cost in tens of shields
 //
-// Every unit counts, Settlers, ships and Nuclear included. v474.05 counts the advances gained since the game began
-//  (plus 1); this counts every advance known, which needs nothing saved and moves the score by the same few points
-//  for every civilization.
+// Every unit counts, Settlers, ships and Nuclear included. `tech_count` is the advances gained since the game began,
+//  plus 1: here, the advances counted by the game's `AdvanceCount` rules (civ1-science's counts those gained in play),
+//  plus 1 (civ-clone/web-renderer#973). A player with no research (yet) scores 0 for it.
 const getRules = (cityRegistry = CityRegistry_1.instance, cityGrowthRegistry = CityGrowthRegistry_1.instance, playerResearchRegistry = PlayerResearchRegistry_1.instance, playerTreasuryRegistry = PlayerTreasuryRegistry_1.instance, unitRegistry = UnitRegistry_1.instance, ruleRegistry = RuleRegistry_1.instance) => [
     new Rank_1.default('civ1-power:player/rank/gold', new Effect_1.default((0, rank_1.treasuryTerm)(Gold_1.default, 32, playerTreasuryRegistry))),
     new Rank_1.default('civ1-power:player/rank/citizens', new Effect_1.default((0, rank_1.citizensTerm)(8, cityRegistry, cityGrowthRegistry))),
-    new Rank_1.default('civ1-power:player/rank/advances', new Effect_1.default((0, rank_1.advancesTerm)(playerResearchRegistry))),
+    new Rank_1.default('civ1-power:player/rank/advances', new Effect_1.default((player) => {
+        // A player with no research (yet) scores 0; only that lookup is caught, so a failing `AdvanceCount` rule throws.
+        let playerResearch;
+        try {
+            playerResearch = playerResearchRegistry.getByPlayer(player);
+        }
+        catch (e) {
+            return 0;
+        }
+        return (0, advanceCount_1.default)(playerResearch, ruleRegistry) + 1;
+    })),
     new Rank_1.default('civ1-power:player/rank/units', new Effect_1.default((0, rank_1.unitCostTerm)(10, unitRegistry, ruleRegistry))),
 ];
 exports.getRules = getRules;

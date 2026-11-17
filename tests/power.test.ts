@@ -4,6 +4,7 @@ import {
   militaryPower,
   militaryStrength,
 } from '@civ-clone/core-power/lib/strength';
+import AdvanceCount from '@civ-clone/core-science/Rules/AdvanceCount';
 import BuildCost from '@civ-clone/core-city-build/Rules/BuildCost';
 import BuildItem from '@civ-clone/core-city-build/BuildItem';
 import Effect from '@civ-clone/core-rule/Effect';
@@ -68,8 +69,17 @@ describe('civ1-power', () => {
   it("ranks a player by v474.05's terms: gold / 32 + 8 × citizens + advances + unit costs / 10", () => {
     const { player, ruleRegistry } = setUp();
 
-    // 100 / 32 = 3, 8 × 8 = 64, 7 advances, units 1 + 1 + 4 + 16 = 22
-    expect(rank(player, ruleRegistry)).equal(3 + 64 + 7 + 22);
+    // 100 / 32 = 3, 8 × 8 = 64, 7 advances counted from 1 = 8, units 1 + 1 + 4 + 16 = 22
+    expect(rank(player, ruleRegistry)).equal(3 + 64 + 8 + 22);
+  });
+
+  it("counts the advances as the game's `AdvanceCount` rules do, from 1 (civ-clone/web-renderer#973)", () => {
+    const { player, ruleRegistry } = setUp();
+
+    // Of the 7 known, 4 gained in play, say.
+    ruleRegistry.register(new AdvanceCount(new Effect((): number => 4)));
+
+    expect(rank(player, ruleRegistry)).equal(3 + 64 + 5 + 22);
   });
 
   it('counts every unit but Nuclear ones in military strength', () => {
