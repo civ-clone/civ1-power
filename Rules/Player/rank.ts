@@ -29,6 +29,7 @@ import {
 } from '@civ-clone/core-unit/UnitRegistry';
 import Effect from '@civ-clone/core-rule/Effect';
 import Player from '@civ-clone/core-player/Player';
+import PlayerResearch from '@civ-clone/core-science/PlayerResearch';
 import advanceCount from '@civ-clone/core-science/advanceCount';
 import Gold from '@civ-clone/base-city-yield-gold/Gold';
 import Rank from '@civ-clone/core-power/Rules/Rank';
@@ -67,16 +68,16 @@ export const getRules: (
   new Rank(
     'civ1-power:player/rank/advances',
     new Effect((player: Player): number => {
+      // A player with no research (yet) scores 0; only that lookup is caught, so a failing `AdvanceCount` rule throws.
+      let playerResearch: PlayerResearch;
+
       try {
-        return (
-          advanceCount(
-            playerResearchRegistry.getByPlayer(player),
-            ruleRegistry
-          ) + 1
-        );
+        playerResearch = playerResearchRegistry.getByPlayer(player);
       } catch (e) {
         return 0;
       }
+
+      return advanceCount(playerResearch, ruleRegistry) + 1;
     })
   ),
   new Rank(

@@ -24,12 +24,15 @@ const getRules = (cityRegistry = CityRegistry_1.instance, cityGrowthRegistry = C
     new Rank_1.default('civ1-power:player/rank/gold', new Effect_1.default((0, rank_1.treasuryTerm)(Gold_1.default, 32, playerTreasuryRegistry))),
     new Rank_1.default('civ1-power:player/rank/citizens', new Effect_1.default((0, rank_1.citizensTerm)(8, cityRegistry, cityGrowthRegistry))),
     new Rank_1.default('civ1-power:player/rank/advances', new Effect_1.default((player) => {
+        // A player with no research (yet) scores 0; only that lookup is caught, so a failing `AdvanceCount` rule throws.
+        let playerResearch;
         try {
-            return ((0, advanceCount_1.default)(playerResearchRegistry.getByPlayer(player), ruleRegistry) + 1);
+            playerResearch = playerResearchRegistry.getByPlayer(player);
         }
         catch (e) {
             return 0;
         }
+        return (0, advanceCount_1.default)(playerResearch, ruleRegistry) + 1;
     })),
     new Rank_1.default('civ1-power:player/rank/units', new Effect_1.default((0, rank_1.unitCostTerm)(10, unitRegistry, ruleRegistry))),
 ];
